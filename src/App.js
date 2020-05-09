@@ -67,20 +67,24 @@ function Crumbs({ items, width, renderItem }) {
           hideSeperator: hiddenCrumbs.length > 0
         })}
         {hiddenCrumbs.length > 0 && (
-          <small
-            style={{
-              background: "green",
-              padding: 5
-            }}
-          >
-            {hiddenCrumbs.slice(0).map((item, index) =>
-              renderItem({
-                item: item,
-                isFinalCrumb: false,
-                hideSeperator: index === hiddenCrumbs.length - 1
-              })
-            )}
-          </small>
+          <span class="collapsed">
+            <button className="collapsed-button">...</button>
+            <span class="collapsed-crumbs">
+              {hiddenCrumbs.slice(0).map((item, index) => (
+                <div
+                  style={{
+                    paddingLeft: 10 * index
+                  }}
+                >
+                  {renderItem({
+                    item: item,
+                    isFinalCrumb: false,
+                    hideSeperator: true
+                  })}
+                </div>
+              ))}
+            </span>
+          </span>
         )}
         {visibleCrumbs.map((item, index) => {
           const isFinalCrumb = index === visibleCrumbs.length - 1;
@@ -140,6 +144,7 @@ export default function App() {
             name={item.Name}
             hideSeperator={hideSeperator}
             canClick={!isFinalCrumb}
+            onClick={() => {}}
           />
         )}
       />

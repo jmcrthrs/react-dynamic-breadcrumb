@@ -1,15 +1,25 @@
-.App {
-  font-family: sans-serif;
-  text-align: center;
-}
-
 .breadcrumb {
   min-height: 30px;
   line-height: 1.5em;
   display: block;
-  overflow: visible;
-  white-space: nowrap;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.collapsed:hover .collapsed-crumbs {
+  display: block;
+}
+
+.collapsed-button {
+  margin: 0 10px;
+}
+
+.collapsed-crumbs {
+  display: none;
+  border: 1px solid rgb(214, 214, 214);
+  border-radius: 5px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1000;
 }
