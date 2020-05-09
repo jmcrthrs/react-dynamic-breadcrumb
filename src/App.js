@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { AutoSizer } from "react-virtualized";
 import "./styles.css";
 
 const Seperator = () => <span>&nbsp;&nbsp;/&nbsp;&nbsp;</span>;
@@ -20,91 +21,59 @@ const Crumb = ({ id, onClick, name, hideSeperator, canClick = true }) => {
   );
 };
 
-function Crumbs({
-  items,
-  onClick,
-  spaceId,
-  spaceType,
-  maxNumberOfCrumbs = 300
-}) {
-  //const maxNumberOfCrumbs = 300;
-  const numberOfLastCrumbs = maxNumberOfCrumbs;
+function Crumbs({ items, onClick, spaceId, width, renderItem }) {
+  const breadcrumbRef = useRef(null);
+  const [maxNumberOfCrumbs, setMaxNumberOfCrumbs] = useState(items.length - 1);
 
-  if (items.length <= maxNumberOfCrumbs) {
-    return (
-      <>
-        {items.map((item, index) => (
-          <Crumb
-            hideSeperator={index === items.length - 1}
-            key={item.Id}
-            id={item.Id}
-            onClick={onClick}
-            name={item.Name}
-            spaceId={spaceId}
-            spaceType={spaceType}
-            canClick={index !== items.length - 1}
-          />
-        ))}
-      </>
-    );
-  }
+  useLayoutEffect(() => {
+    /* 
+        reset whenever the length of breadcrumbs, 
+        or the width of the container changes
+      */
+    setMaxNumberOfCrumbs(items.length - 1);
+  }, [items.length, width]);
+
+  useLayoutEffect(() => {
+    /*
+        if the breadcrumbs overflow their container, remove a breadcrumb and try again
+      */
+    if (
+      breadcrumbRef.current.scrollWidth > breadcrumbRef.current.offsetWidth &&
+      maxNumberOfCrumbs > 1 //ensure 1 crumb is always displayed
+    ) {
+      setMaxNumberOfCrumbs(maxNumberOfCrumbs - 1);
+    }
+  }, [maxNumberOfCrumbs, width]);
+
   // get the last crumbs to display
   const firstCrumb = items.slice(0, 1)[0];
-  const lastCrumb = items.slice(items.length - 1);
-  const visibleCrumbs = items.slice(items.length - numberOfLastCrumbs);
-  const hiddenCrumbs = items.slice(1, items.length - numberOfLastCrumbs);
+  const sliceIndex = items.length - maxNumberOfCrumbs;
+  const visibleCrumbs = items.slice(sliceIndex);
+  const hiddenCrumbs = items.slice(1, sliceIndex);
+
   return (
-    <span>
-      <Crumb
-        hideSeperator={hiddenCrumbs.length > 0}
-        key={firstCrumb.Id}
-        id={firstCrumb.Id}
-        name={firstCrumb.Name}
-        spaceId={spaceId}
-        spaceType={spaceType}
-        onClick={onClick}
-      />
-      {hiddenCrumbs.length > 0 && (
-        <small
-          style={{
-            background: "green",
-            padding: 5
-          }}
-        >
-          {hiddenCrumbs.slice(0).map(item => (
-            <Crumb
-              hideSeperator
-              key={item.Id}
-              id={item.Id}
-              name={item.Name}
-              spaceId={spaceId}
-              onClick={onClick}
-            />
-          ))}
-        </small>
-      )}
-      {visibleCrumbs.map((item, index) => (
-        <Crumb
-          hideSeperator={index === visibleCrumbs.length - 1}
-          key={item.Id}
-          id={item.Id}
-          onClick={onClick}
-          name={item.Name}
-          spaceId={spaceId}
-          spaceType={spaceType}
-          canClick={index !== visibleCrumbs.length - 1}
-        />
-      ))}
-      <Crumb
-        hideSeperator
-        key={lastCrumb.Id}
-        id={lastCrumb.Id}
-        name={lastCrumb.Name}
-        spaceId={spaceId}
-        spaceType={spaceType}
-        onClick={onClick}
-      />
-    </span>
+    <div className="breadcrumb" ref={breadcrumbRef} style={{ width }}>
+      <span>
+        {renderItem(firstCrumb, hiddenCrumbs.length > 0)}
+        {hiddenCrumbs.length > 0 && (
+          <small
+            style={{
+              background: "green",
+              padding: 5
+            }}
+          >
+            {hiddenCrumbs
+              .slice(0)
+              .map((item, index) =>
+                renderItem(item, index === hiddenCrumbs.length - 1)
+              )}
+          </small>
+        )}
+        {visibleCrumbs.map((item, index) =>
+          renderItem(item, index === visibleCrumbs.length - 1)
+        )}
+      </span>
+    </div>
   );
 }
 
@@ -135,32 +104,26 @@ const items = [
   }
 ];
 
+const AutoSizedBreadcrumb = props => (
+  <AutoSizer disableHeight>
+    {({ width }) => <Crumbs width={width} {...props} />}
+  </AutoSizer>
+);
+
 export default function App() {
   return (
     <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
-      <Crumbs items={items} maxNumberOfCrumbs={0} />
-      <br />
-      <br />
-      <Crumbs items={items} maxNumberOfCrumbs={1} />
-      <br />
-      <br />
-      <Crumbs items={items} maxNumberOfCrumbs={2} />
-      <br />
-      <br />
-      <Crumbs items={items} maxNumberOfCrumbs={3} />
-      <br />
-      <br />
-      <Crumbs items={items} maxNumberOfCrumbs={4} />
-      <br />
-      <br />
-      <Crumbs items={items} maxNumberOfCrumbs={5} />
-      <br />
-      <br />
-      <Crumbs items={items} maxNumberOfCrumbs={6} />
-      <br />
-      <br />
+      <AutoSizedBreadcrumb
+        items={items.slice(0, 6)}
+        renderItem={(item, hideSeperator) => (
+          <Crumb
+            key={item.Id}
+            id={item.Id}
+            name={item.Name}
+            hideSeperator={hideSeperator}
+          />
+        )}
+      />
     </div>
   );
 }
