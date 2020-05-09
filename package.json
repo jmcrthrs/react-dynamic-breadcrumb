@@ -1,17 +1,15 @@
 {
-  "name": "react",
+  "name": "react-dynamic-breadcrumb",
   "version": "1.0.0",
-  "description": "React example starter project",
-  "keywords": [
-    "react",
-    "starter"
-  ],
+  "description": "A breadcrumb component that collapses when the breadcrumbs overflow the container",
+  "keywords": [],
   "main": "src/index.js",
   "dependencies": {
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-scripts": "3.0.1",
-    "react-virtualized": "9.21.2"
+    "react-virtualized": "9.21.2",
+    "react-virtualized-auto-sizer": "1.0.2"
   },
   "devDependencies": {
     "typescript": "3.8.3"

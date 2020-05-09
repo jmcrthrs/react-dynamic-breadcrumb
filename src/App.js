@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { AutoSizer } from "react-virtualized";
+import AutoSizer from "react-virtualized-auto-sizer";
 import "./styles.css";
 
 const Seperator = () => <span>&nbsp;&nbsp;/&nbsp;&nbsp;</span>;
@@ -21,7 +21,14 @@ const Crumb = ({ id, onClick, name, hideSeperator, canClick = true }) => {
   );
 };
 
-function Crumbs({ items, onClick, spaceId, width, renderItem }) {
+/*
+  renderItem({
+    item: objecz,
+    isFinalCrumb: bool,
+    hideSeperator: bool
+  })
+*/
+function Crumbs({ items, width, renderItem }) {
   const breadcrumbRef = useRef(null);
   const [maxNumberOfCrumbs, setMaxNumberOfCrumbs] = useState(items.length - 1);
 
@@ -54,7 +61,11 @@ function Crumbs({ items, onClick, spaceId, width, renderItem }) {
   return (
     <div className="breadcrumb" ref={breadcrumbRef} style={{ width }}>
       <span>
-        {renderItem(firstCrumb, hiddenCrumbs.length > 0)}
+        {renderItem({
+          item: firstCrumb,
+          isFinalCrumb: false,
+          hideSeperator: hiddenCrumbs.length > 0
+        })}
         {hiddenCrumbs.length > 0 && (
           <small
             style={{
@@ -62,16 +73,22 @@ function Crumbs({ items, onClick, spaceId, width, renderItem }) {
               padding: 5
             }}
           >
-            {hiddenCrumbs
-              .slice(0)
-              .map((item, index) =>
-                renderItem(item, index === hiddenCrumbs.length - 1)
-              )}
+            {hiddenCrumbs.slice(0).map((item, index) =>
+              renderItem({
+                item: item,
+                isFinalCrumb: false,
+                hideSeperator: index === hiddenCrumbs.length - 1
+              })
+            )}
           </small>
         )}
         {visibleCrumbs.map((item, index) => {
           const isFinalCrumb = index === visibleCrumbs.length - 1;
-          return renderItem(item, isFinalCrumb);
+          return renderItem({
+            item: item,
+            isFinalCrumb: isFinalCrumb,
+            hideSeperator: isFinalCrumb
+          });
         })}
       </span>
     </div>
@@ -116,13 +133,13 @@ export default function App() {
     <div className="App">
       <AutoSizedBreadcrumb
         items={items.slice(0, 6)}
-        renderItem={(item, isFinalCrumb) => (
+        renderItem={({ item, hideSeperator, isFinalCrumb }) => (
           <Crumb
             key={item.Id}
             id={item.Id}
             name={item.Name}
-            hideSeperator={isFinalCrumb}
-            //canClick={!isFinalCrumb}
+            hideSeperator={hideSeperator}
+            canClick={!isFinalCrumb}
           />
         )}
       />
