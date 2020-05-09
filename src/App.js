@@ -69,9 +69,10 @@ function Crumbs({ items, onClick, spaceId, width, renderItem }) {
               )}
           </small>
         )}
-        {visibleCrumbs.map((item, index) =>
-          renderItem(item, index === visibleCrumbs.length - 1)
-        )}
+        {visibleCrumbs.map((item, index) => {
+          const isFinalCrumb = index === visibleCrumbs.length - 1;
+          return renderItem(item, isFinalCrumb);
+        })}
       </span>
     </div>
   );
@@ -115,12 +116,13 @@ export default function App() {
     <div className="App">
       <AutoSizedBreadcrumb
         items={items.slice(0, 6)}
-        renderItem={(item, hideSeperator) => (
+        renderItem={(item, isFinalCrumb) => (
           <Crumb
             key={item.Id}
             id={item.Id}
             name={item.Name}
-            hideSeperator={hideSeperator}
+            hideSeperator={isFinalCrumb}
+            //canClick={!isFinalCrumb}
           />
         )}
       />
