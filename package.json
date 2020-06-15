@@ -1,6 +1,6 @@
 {
   "name": "react-dynamic-breadcrumb",
-  "version": "1.0.6",
+  "version": "2.0.6",
   "description": "A breadcrumb component that collapses when the breadcrumbs overflow the container",
   "keywords": [],
   "main": "src/index.js",
