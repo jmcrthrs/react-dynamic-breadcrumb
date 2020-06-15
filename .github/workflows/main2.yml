@@ -12,7 +12,5 @@ jobs:
         fetch-depth: '0'
     - name: Automated Version Bump
       uses: phips28/gh-action-bump-version@v7.1.0
-      with:
-        tag-prefix: rv # optional, default is 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
