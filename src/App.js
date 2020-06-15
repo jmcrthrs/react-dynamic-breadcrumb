@@ -4,6 +4,7 @@ import "./styles.css";
 
 const Seperator = () => <span>&nbsp;&nbsp;/&nbsp;&nbsp;</span>;
 
+
 const Crumb = ({ id, onClick, name, hideSeperator, canClick = true }) => {
   const Element = canClick ? "a" : "span"; // is this acceptable?
   return (
