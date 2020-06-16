@@ -1,3 +1,3 @@
-it('renders, ()=>{
+it('renders', ()=>{
 expect(true).toBe(true)
 })
